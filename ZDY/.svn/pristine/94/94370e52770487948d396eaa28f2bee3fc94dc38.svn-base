@@ -1,0 +1,167 @@
+package com.zdy.dao;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import org.hibernate.Query;
+import org.springframework.stereotype.Service;
+
+import com.zdy.entity.Person;
+import com.zdy.entity.User;
+import com.zdy.utils.DataSouce;
+
+@Service("personDao")
+public class PersonDaoImpl extends BaseDao implements PersonDao {
+	
+	private int pageSize = DataSouce.PAGESIZE;
+
+	@Override
+	public Person getPerson(Integer id) {
+		// TODO Auto-generated method stub
+//		String hql = "from Person p where p.id=?";
+		String hql = "from Person p where p.zt=1 and p.id=?";
+		Query query = sessionFactory.getCurrentSession().createQuery(hql);
+		query.setInteger(0, Integer.valueOf(id));
+		
+		return (Person) query.uniqueResult();
+	}
+
+	@Override
+	public List<Person> getAllPerson(String xm,String sfzh,Integer page) {
+		// TODO Auto-generated method stub
+		
+		List<Object> params = new ArrayList<Object>();
+		StringBuffer hql = new StringBuffer();
+//		hql.append("from Person p where 1=1 ");
+		hql.append("from Person p where p.zt=1 ");
+		
+		if(xm!=null && xm.length()>0){
+			hql.append(" and p.xm = ? ");
+			params.add(xm);
+		}
+		
+		if(sfzh!=null && sfzh.length()>0){
+			hql.append(" and p.sfzh = ? ");
+			params.add(sfzh);
+		}
+		
+		hql.append("order by lrsj desc");
+		Query query = sessionFactory.getCurrentSession().createQuery(hql.toString());
+		
+		for(int i=0;i<params.size();i++) {
+			query.setParameter(i, params.get(i));
+		}
+		int begin = (page-1)*pageSize;
+		query.setFirstResult(begin);
+		query.setMaxResults(pageSize);
+
+		return query.list();
+	}
+
+	@Override
+	public void addPerson(Person person) {
+		// TODO Auto-generated method stub
+		person.setZt(1);
+		sessionFactory.getCurrentSession().save(person);
+	}
+
+	@Override
+	public boolean delPerson(Integer id) {
+		// TODO Auto-generated method stub
+		String hql = "delete Person p where p.id = ?";
+		Query query = sessionFactory.getCurrentSession().createQuery(hql);
+		query.setInteger(0, Integer.valueOf(id));
+
+		return (query.executeUpdate() > 0);
+	}
+
+	@Override
+	public boolean modifyPerson(Person person) {
+		// TODO Auto-generated method stub
+		StringBuffer sb = new StringBuffer();
+		sb.append("update Person p set p.xm = ?,");
+		sb.append("p.sfzh = ?   ,");
+		sb.append("p.xb = ?     ,");
+		sb.append("p.mz = ?     ,");
+		sb.append("p.csrq = ?   ,");
+		sb.append("p.xzz = ?    ,");
+		sb.append("p.lrsj = ?   ,");
+		sb.append("p.xgzdw = ?  ,");
+		sb.append("p.sjh = ?    ,");
+		sb.append("p.yy = ?     ,");
+		sb.append("p.jysj = ?   ,");
+		sb.append("p.jybm = ?   ,");
+		sb.append("p.jysfzh = ? ,");
+		sb.append("p.jyxm = ?   ,");
+		sb.append("p.zt = ?      ");
+		sb.append("where p.id = ?");
+//		String hql = "update Person p set u.userName = ?,u.age=? where u.id = ?";
+		Query query = sessionFactory.getCurrentSession().createQuery(sb.toString());
+		query.setString(0, person.getXm());
+		query.setString(1, person.getSfzh());
+		query.setString(2, person.getXb());
+		query.setString(3, person.getMz());
+		query.setString(4, person.getCsrq());
+		query.setString(5, person.getXzz());
+//		query.setDate(6, person.getLrsj());
+		query.setDate(6, new Date());
+		query.setString(7, person.getXgzdw());
+		query.setString(8, person.getSjh());
+		query.setString(9, person.getYy());
+		query.setString(10, person.getJysj());
+		query.setString(11, person.getJybm());
+		query.setString(12, person.getJysfzh());
+		query.setString(13, person.getJyxm());
+		query.setInteger(14, 1);//state为1为正常显 0为逻辑删
+		query.setInteger(15, person.getId());
+
+		return (query.executeUpdate() > 0);
+	}
+
+	@Override
+	public Integer findTotalPage(String xm, String sfzh) {
+		// TODO Auto-generated method stub
+		List<Object> params = new ArrayList<Object>();
+		StringBuffer hql = new StringBuffer();
+//		hql.append("select count(*) from Person p where 1=1 ");
+		hql.append("select count(*) from Person p where p.zt=1 ");
+		
+		if(xm!=null && xm.length()>0){
+			hql.append(" and p.xm = ? ");
+			params.add(xm);
+		}
+		
+		if(sfzh!=null && sfzh.length()>0){
+			hql.append(" and p.sfzh = ? ");
+			params.add(sfzh);
+		}
+		
+		Query query = sessionFactory.getCurrentSession().createQuery(hql.toString());
+		
+		for(int i=0;i<params.size();i++) {
+			query.setParameter(i, params.get(i));
+		}
+		
+		Object count = query.uniqueResult();
+		int rows = Integer.valueOf(count.toString());
+		if(rows % pageSize == 0) {
+			return rows/pageSize;
+		} else {
+			return rows/pageSize + 1;
+		}
+		
+	}
+
+	@Override
+	public boolean personState(Integer id) {
+		// TODO Auto-generated method stub
+		
+		String hql = "update Person p set p.zt=0 where p.id = ?";
+		Query query = sessionFactory.getCurrentSession().createQuery(hql);
+		query.setInteger(0, Integer.valueOf(id));
+		
+		return (query.executeUpdate() > 0);
+	}
+
+}

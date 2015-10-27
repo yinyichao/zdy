@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<beans xmlns="http://www.springframework.org/schema/beans" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"  
+    xmlns:tx="http://www.springframework.org/schema/tx"  
+    xsi:schemaLocation="http://www.springframework.org/schema/beans 
+    http://www.springframework.org/schema/beans/spring-beans.xsd  
+         http://www.springframework.org/schema/tx 
+         http://www.springframework.org/schema/tx/spring-tx.xsd">  
+
+	<!-- 配置数据源 -->
+	<bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+		<property name="driverClassName" value="oracle.jdbc.driver.OracleDriver"></property>
+		<property name="url" value="jdbc:oracle:thin:@192.168.1.201:1521:hcrfid"></property>
+		<property name="username" value="hcapp"></property>
+		<property name="password" value="app789hc"></property>
+	</bean>  
+
+    <!-- 配置sessionFactory -->  
+    <bean id="sessionFactory" class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">  
+        <property name="dataSource" ref="dataSource" />  
+        <property name="packagesToScan" value="com.zdy.entity" /><!-- 实体类的包 -->  
+        <property name="hibernateProperties">  
+            <props>  
+                <prop key="hibernate.dialect">org.hibernate.dialect.Oracle10gDialect</prop>  
+                <prop key="hibernate.show_sql">true</prop>  
+                <!-- 会自动创表，但是不会自动创建数据库，所以要先手动创建数据库。 -->  
+                <prop key="hibernate.hbm2ddl.auto">update</prop>  
+                <prop key="hibernate.format_sql">true</prop>  
+            </props>  
+        </property>  
+    </bean>  
+      
+ 	<!-- 配置事务管理 -->  
+    <bean id="transactionManager" class="org.springframework.orm.hibernate4.HibernateTransactionManager">  
+        <property name="sessionFactory" ref="sessionFactory" />  
+    </bean> 
+       
+    <!-- 使用annotation定义事务     -->
+    <tx:annotation-driven transaction-manager="transactionManager" proxy-target-class="true" />
+	
+</beans>

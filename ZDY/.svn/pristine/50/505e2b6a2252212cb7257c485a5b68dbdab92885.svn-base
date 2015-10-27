@@ -1,0 +1,135 @@
+package com.zdy.controller;
+
+import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+import com.zdy.entity.Resources;
+import com.zdy.entity.User;
+import com.zdy.service.ResourceManager;
+import com.zdy.service.UserManager;
+import com.zdy.utils.Page;
+
+@Controller
+@RequestMapping("/user")
+public class UserController {
+
+	@Autowired
+    @Qualifier("userManager")
+	private UserManager userManager;
+	@Autowired
+    @Qualifier("resourceManager")
+	private ResourceManager resourceManager;
+
+	@RequestMapping("/getUserPageAll")
+	public void getAllUser(Integer page,Integer rows, HttpServletResponse response) {
+		String str = "";
+		try {
+			Page<User> pages = userManager.findPageUserByIntegrateds((--page)*rows, rows,null);
+			str = PagetoString(pages);
+			response.setContentType("application/json");
+			PrintWriter out = response.getWriter();
+			out.write(str);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	@RequestMapping("/getUserAll")
+	public String getAllUser(HttpServletRequest request) {
+		return "user/chaxun";
+	}
+
+	@RequestMapping("/getUser")
+	public String getUser(User user, HttpServletRequest request,HttpSession httpSession) {
+		User userC = userManager.getUser(user);
+		List<Resources> mainlist;
+		if(userC==null){
+			request.setAttribute("error","用户名或密码错误");
+			return "../../Login";
+		}else{
+			mainlist = new ArrayList<Resources>();
+			mainlist = resourceManager.getResourceAll();			
+			httpSession.setAttribute("user", userC);
+			httpSession.setAttribute("username", userC.getUsername());
+			
+			httpSession.setAttribute("mainlist", mainlist);//主菜单
+			request.setAttribute("user", userManager.getUser(user));
+			return "main/main";
+		}
+	}
+	public String PagetoString(Page<User> page){
+		String str = "{\"total\":"+page.getTotal()+",\"rows\":[";
+		List<User> pageList= page.getRoot();
+		if(pageList!=null&&pageList.size()>0){
+			String qx = "有";
+			User user = new User();
+			for (int i = 0; i < pageList.size(); i++) {
+				user = strTrim(pageList.get(i));
+				if(user.getQx().equals("1"))qx = "无";
+				str+="{\"yhm\":\""+user.getUsername()+"\"," +
+						"\"mm\":\""+user.getMm()+"\"," +
+						"\"xm\":\""+user.getXm()+"\"," +
+						"\"qx\":\""+qx+"\"}";
+				if(i!=pageList.size()-1){
+					str+=",";
+				}
+			}
+		}
+		str+="]}";
+		return str;
+	}
+	public User strTrim(User user){
+		user.setUsername(user.getUsername()==null?"":user.getUsername());
+		user.setMm(user.getMm()==null?"":user.getMm());
+		user.setQx(user.getQx()==null?0:user.getQx());
+		user.setXm(user.getXm()==null?"":user.getXm());
+		return user;
+	}
+//
+//	@RequestMapping("/toAddUser")
+//	public String toAddUser() {
+//		return "addUser";
+//	}
+//
+//	@RequestMapping("/addUser")
+//	public String addUser(User user, HttpServletRequest request) {
+//		System.out.println("�û���======" + user.getUserName()+"|"+user.getAge());
+//		userManager.addUser(user);
+//		return "redirect:/user/getAllUser.do";
+//	}
+//
+//	@RequestMapping("/delUser")
+//	public void delUser(String id, HttpServletResponse response) {
+//		String result = "{\"result\":\"error\"}";
+//		if (userManager.delUser(id)) {
+//			result = "{\"result\":\"success\"}";
+//		}
+//		response.setContentType("application/json");
+//		try {
+//			PrintWriter out = response.getWriter();
+//			out.write(result);
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//		}
+//	}
+//
+//	@RequestMapping("/updateUser")
+//	public String updateUser(User user, HttpServletRequest request) {
+//		if (userManager.updateUser(user)) {
+//			user = userManager.getUser(String.valueOf(user.getId()));
+//			request.setAttribute("user", user);
+//			return "redirect:/user/getAllUser.do";
+//		} else {
+//			return "error";
+//		}
+//	}
+}

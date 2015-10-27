@@ -1,0 +1,138 @@
+package com.zdy.controller;
+
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.Date;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+import com.zdy.entity.Car;
+import com.zdy.service.CarManager;
+
+
+@Controller
+@RequestMapping("/car")
+public class CarController {
+
+	@Resource(name = "carManager")
+	private CarManager carManager;
+	
+	
+	@RequestMapping("/getAllCar")
+	public String getAllCar(Car car, Integer page, ModelMap modelMap){
+		
+		
+		if(page==null){
+			page=1;
+		}
+		
+		modelMap.addAttribute("carList", carManager.getAllCar(car.getCph(), page));
+		modelMap.addAttribute("findTotalPage", carManager.findTotalPage(car.getCph()));
+		modelMap.addAttribute("page", page);
+		//保留查询条件
+		modelMap.addAttribute("cph", car.getCph());
+		return "car/index";
+	}
+
+	
+	@RequestMapping("/getCar")
+	public String getCar(Car car,ModelMap modelMap){
+		
+		modelMap.addAttribute("car",carManager.getCar(car.getId()));
+		return "car/editcar";
+	}
+
+	
+	@RequestMapping("/addCar")
+	public String addCar(Car car , HttpServletRequest request){
+		System.out.println("addcar test ");
+		System.out.println("addcar test 1 :"+car.getCph());
+		
+		car.setLrsj(new Date());
+		carManager.addCar(car);
+		return "redirect:/car/getAllCar.do";
+	}
+	
+	
+	
+	
+	@RequestMapping("/delCar")
+	public void delCar(Car car , HttpServletResponse response){
+		
+		boolean flag = carManager.delCar(car.getId());
+		
+		String result = "{\"result\":\"error\"}";
+		if(flag){
+			result = "{\"result\":\"success\"}";
+		}
+		response.setContentType("application/json");
+		
+		try {
+			PrintWriter out = response.getWriter();
+			out.write(result);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+	}
+	
+	@RequestMapping("/modifyCar")
+	public String modifyCar(Car car , ModelMap modelMap){
+		
+		boolean flag = carManager.modifyCar(car);
+		
+		if(flag){
+			car = carManager.getCar(car.getId());
+			modelMap.addAttribute("car",car);
+			return "redirect:/car/getAllCar.do";
+		}else {
+			return "error";
+		}
+		
+	}
+	
+	
+	
+	@RequestMapping("/toAddCar")
+	public String toAddCar() {
+		System.out.println("test caradd--------------------------");
+		return "car/addcar";
+	}
+	
+	@RequestMapping("/toUpdateCar")
+	public String toUpdateCar() {
+		return "car/updatecar";
+	}
+	
+	
+	
+	
+	@RequestMapping("/carState")
+	public String carState(Car car , HttpServletResponse response) {
+		boolean flag = carManager.carState(car.getId());
+		
+		String result = "{\"result\":\"error\"}";
+		if(flag){
+			result = "{\"result\":\"success\"}";
+		}
+		response.setContentType("application/json");
+		
+		try {
+			PrintWriter out = response.getWriter();
+			out.write(result);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return "redirect:/car/getAllCar.do";
+	}
+	
+	
+	
+	
+}

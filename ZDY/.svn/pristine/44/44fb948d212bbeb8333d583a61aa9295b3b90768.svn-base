@@ -1,0 +1,14 @@
+package com.zdy.dao;
+
+import org.hibernate.SessionFactory;
+
+public class BaseDao {
+	
+	public SessionFactory sessionFactory;
+
+	public void setSessionFactory(SessionFactory sessionFactory) {
+		this.sessionFactory = sessionFactory;
+	}
+	
+	
+}

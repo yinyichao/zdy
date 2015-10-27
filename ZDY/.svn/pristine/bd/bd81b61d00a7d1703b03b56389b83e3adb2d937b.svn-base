@@ -1,0 +1,100 @@
+package com.zdy.dao.impl;
+
+import java.math.BigDecimal;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.persistence.Query;
+
+import org.springframework.stereotype.Service;
+
+import com.zdy.dao.Car1Dao;
+import com.zdy.dao.base.BaseJPADao;
+import com.zdy.entity.Car;
+import com.zdy.utils.Page;
+@Service("car1Dao")
+public class Car1DaoImpl extends BaseJPADao<Car, Long> implements Car1Dao{
+
+	@Override
+	public Car getCar(Car car) {
+		// TODO Auto-generated method stub
+		Map<String, Object> carMap = new HashMap<String, Object>();
+		
+		
+		return findUniqueBy(carMap);
+	}
+
+	@Override
+	public List<Car> getCarAll() {
+		// TODO Auto-generated method stub
+		return listAll();
+	}
+
+	
+	//201find
+	@Override
+	public Page<Car> findPageCarByIntegrateds(Page<Car> page,
+			Map<String, Object> conditions) {
+		// TODO Auto-generated method stub
+
+
+		String fromSql = "from z_car t ";
+		
+		if(conditions!=null && conditions.size()>0){
+			int i = 0;
+			Object[] values = new Object[conditions.size()];
+			for (Map.Entry<String, Object> property : conditions.entrySet()) {
+				if (i == 0) {
+					fromSql += " where";
+				} else {
+					fromSql += " and";
+				}
+				fromSql += " t." + property.getKey() + "=?";
+				values[i++] = property.getValue();
+			}
+		}
+		
+		fromSql += " order by t.id desc";
+		String countSql = "select count(1) " + fromSql;
+		String sql = "select t.* " + fromSql;
+		Query query = getEntityManager().createNativeQuery(countSql);
+		BigDecimal count = (BigDecimal) query.getSingleResult();
+		page.setTotal(count.longValue());
+		
+		query = getEntityManager().createNativeQuery(sql, this.getEntityClass());
+		query.setFirstResult(page.getStart());
+		query.setMaxResults(page.getLimit());
+		@SuppressWarnings("unchecked")
+		List<Car> result = query.getResultList();
+		page.setRoot(result);
+		
+		return page;
+	}
+
+	@Override
+	public void modifyCar(Car car) {
+		// TODO Auto-generated method stub
+		car.setZt(1);
+		super.update(car);
+	}
+
+	@Override
+	public void saveCar(Car car) {
+		// TODO Auto-generated method stub
+		car.setZt(1);//³õÊ¼Îª1 0 ÎªÂß¼­É¾³ý
+		super.save(car);
+	}
+
+	@Override
+	public void modifyCarState(Car car) {
+		// TODO Auto-generated method stub
+		Map<String, Object> carMap = new HashMap<String, Object>();
+		
+		carMap.put("id", car.getId());
+		Car temp = super.findUniqueBy(carMap);
+		temp.setZt(0);
+		super.update(temp);
+	}
+
+}

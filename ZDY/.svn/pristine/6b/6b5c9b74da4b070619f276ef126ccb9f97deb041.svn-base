@@ -1,0 +1,270 @@
+<%@ page language="java" pageEncoding="UTF-8"%>
+<%
+String path = request.getContextPath();
+String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+path+"/";
+%>
+<html>
+<head>
+<title>综合查询</title>
+<style type="text/css">
+#custom {
+	cursor: move;
+}
+
+#custom-rzwrap {
+	z-index: 10000;
+}
+
+#custom-rzwrap .x-resizable-handle {
+	width: 11px;
+	height: 11px;
+	background: transparent url(../../img/sizer/square.gif) no-repeat;
+	margin: 0px;
+}
+
+#custom-rzwrap .x-resizable-handle-east,#custom-rzwrap .x-resizable-handle-west
+	{
+	top: 45%;
+}
+
+#custom-rzwrap .x-resizable-handle-north,#custom-rzwrap .x-resizable-handle-south
+	{
+	left: 45%;
+}
+body{ font-size:12px; line-height:24px;background-color:#DFE8F6;} 
+</style>
+<META name="GENERATOR" content="MSHTML 8.00.7600.17267">
+<link rel="stylesheet" type="text/css" href="<%=path%>/jquery-easyui-1.4.1/themes/default/easyui.css">
+<link rel="stylesheet" type="text/css" href="<%=path%>/jquery-easyui-1.4.1/themes/icon.css">
+<script type="text/javascript" src="<%=path%>/js/jquery-1.9.1.min.js"></script> 
+<script type="text/javascript" src="<%=path%>/jquery-easyui-1.4.1/jquery.easyui.min.js"></script>
+<script type="text/javascript" src="<%=path%>/jquery-easyui-1.4.1/easyui-lang-zh_CN.js"></script>
+
+<script>
+var JSON = function () {
+    var m = {
+            '\b': '\\b',
+            '\t': '\\t',
+            '\n': '\\n',
+            '\f': '\\f',
+            '\r': '\\r',
+            '"' : '\\"',
+            '\\': '\\\\'
+        },
+        s = {
+            'boolean': function (x) {
+                return String(x);
+            },
+            number: function (x) {
+                return isFinite(x) ? String(x) : 'null';
+            },
+            string: function (x) {
+                if (/["\\\x00-\x1f]/.test(x)) {
+                    x = x.replace(/([\x00-\x1f\\"])/g, function(a, b) {
+                        var c = m[b];
+                        if (c) {
+                            return c;
+                        }
+                        c = b.charCodeAt();
+                        return '\\u00' +
+                            Math.floor(c / 16).toString(16) +
+                            (c % 16).toString(16);
+                    });
+                }
+                return '"' + x + '"';
+            },
+            object: function (x) {
+                if (x) {
+                    var a = [], b, f, i, l, v;
+                    if (x instanceof Array) {
+                        a[0] = '[';
+                        l = x.length;
+                        for (i = 0; i < l; i += 1) {
+                            v = x[i];
+                            f = s[typeof v];
+                            if (f) {
+                                v = f(v);
+                                if (typeof v == 'string') {
+                                    if (b) {
+                                        a[a.length] = ',';
+                                    }
+                                    a[a.length] = v;
+                                    b = true;
+                                }
+                            }
+                        }
+                        a[a.length] = ']';
+                    } else if (x instanceof Object) {
+                        a[0] = '{';
+                        for (i in x) {
+                            v = x[i];
+                            f = s[typeof v];
+                            if (f) {
+                                v = f(v);
+                                if (typeof v == 'string') {
+                                    if (b) {
+                                        a[a.length] = ',';
+                                    }
+                                    a.push(s.string(i), ':', v);
+                                    b = true;
+                                }
+                            }
+                        }
+                        a[a.length] = '}';
+                    } else {
+                        return;
+                    }
+                    return a.join('');
+                }
+                return 'null';
+            }
+        };
+    return {
+        copyright: '(c)2005 JSON.org',
+        license: 'http://www.crockford.com/JSON/license.html',
+/*
+    Stringify a JavaScript value, producing a JSON text.
+*/
+        stringify: function (v) {
+            var f = s[typeof v];
+            if (f) {
+                v = f(v);
+                if (typeof v == 'string') {
+                    return v;
+                }
+            }
+            return null;
+        },
+/*
+    Parse a JSON text, producing a JavaScript value.
+    It returns false if there is a syntax error.
+*/
+        parse: function (text) {
+            try {
+                return !(/[^,:{}\[\]0-9.\-+Eaeflnr-u \n\r\t]/.test(
+                        text.replace(/"(\\.|[^"\\])*"/g, ''))) &&
+                    eval('(' + text + ')');
+            } catch (e) {
+                return false;
+            }
+        }
+    };
+}();
+
+$(document).ready(function(){
+    var idsContainer = $(".panel.datagrid");  //获取所有节点的dom数组  
+	var $treegrid = $(idsContainer[0]); 
+    $treegrid.hide();
+	$("#tjabzw").click(function(){
+    	$('#treeGrid').treegrid({
+				url: '/HCRFID/chaXun_GetTreeData.do',
+				rownumbers: true,
+				pagination: true,
+				pageSize: 10,
+				pageList: [10,20],
+				idField: 'id',
+				treeField: 'name',
+				onClickRow: function(row){
+					$("#tjabzw").val(row.name);
+					$treegrid.hide();
+					$("#isTjabzw").val("1");
+				},
+				onBeforeLoad: function(row,param){
+					$("#tjabzw").val();
+					param.tjabzw = $("#tjabzw").val();	// set id=0, indicate to load new page rows
+					
+				}
+			});
+		
+		$treegrid.css("position","absolute");
+		$treegrid.css("top",85);
+		$treegrid.css("left",90);
+    	$treegrid.show();
+    	
+    });
+    $("#tjabzw").keyup(function(){
+		$("#isTjabzw").val("0");
+		var url = encodeURI('/HCRFID/chaXun_GetTreeData.do?tjabzw='+ $("#tjabzw").val()+'&page=1&rows=10');
+		
+		$.post(url, {}, function(data) {
+			var d = data;//返回json格式结果
+			$('#treeGrid').treegrid('loadData',d);//加载数据更新treegrid
+		}, 'json');
+	});
+  	$("#quyu").click(function(){
+	  	$("#tree").show();
+	  	$("#tree").parent().css("position","absolute");
+  	});
+  	
+  	
+  	//datagrid初始化 
+    $('#list_data').datagrid({ 
+        title:'案件信息', 
+        iconCls:'icon-edit',//图标 
+        width: '98%', 
+        height: '1000%', 
+        nowrap: false, 
+        striped: true, 
+        border: true, 
+        collapsible:false,//是否可折叠的 
+        //fit: true,//自动大小 
+        url:'<%=path%>/user/getUserPageAll.do', 
+        //sortName: 'code', 
+        //sortOrder: 'desc', 
+        remoteSort:false,  
+        idField:'fldId', 
+        singleSelect:false,//是否单选 
+        pagination:true,//分页控件 
+        rownumbers:true//行号 
+        /*,frozenColumns:[[ 
+            {field:'ck',checkbox:true} 
+        ]],
+        toolbar: [{ 
+            text: '添加', 
+            iconCls: 'icon-add', 
+            handler: function() { 
+                openDialog("add_dialog","add"); 
+            } 
+        }, '-', { 
+            text: '修改', 
+            iconCls: 'icon-edit', 
+            handler: function() { 
+                openDialog("add_dialog","edit"); 
+            } 
+        }, '-',{ 
+            text: '删除', 
+            iconCls: 'icon-remove', 
+            handler: function(){ 
+                delAppInfo(); 
+            } 
+        }], */
+    }); 
+    //设置分页控件 
+    var p = $('#list_data').datagrid('getPager'); 
+    $(p).pagination({ 
+        pageSize: 10,//每页显示的记录条数，默认为10 
+        pageList: [5,10,15],//可以设置每页记录条数的列表 
+        beforePageText: '第',//页数文本框前显示的汉字 
+        afterPageText: '页    共 {pages} 页', 
+        displayMsg: '当前显示 {from} - {to} 条记录   共 {total} 条记录'//, 
+        //onSelectPage:function(){
+        //   alert("111");
+        //}
+    });         
+});
+</script>
+</head>
+<body >
+<table id="list_data" cellspacing="0" cellpadding="0" style="height: 70%;"> 
+    <thead> 
+        <tr>  
+            <th field=yhm width="150">登录名</th> 
+            <th field="mm" width="80">密码</th> 
+            <th field="xm" width="130">姓名</th> 
+            <th field="qx" width="100">权限</th> 
+            <!-- <th field="a" width="100">操作</th> -->
+        </tr> 
+    </thead> 
+</table>
+</body>
+</html>

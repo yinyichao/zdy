@@ -1,0 +1,160 @@
+package com.zdy.dao;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import org.hibernate.Query;
+import org.springframework.stereotype.Service;
+
+import com.zdy.entity.Car;
+import com.zdy.entity.Person;
+import com.zdy.utils.DataSouce;
+
+@Service("carDao")
+public class CarDaoImpl extends BaseDao implements CarDao{
+	
+	private int pageSize = DataSouce.PAGESIZE;
+	
+	
+
+	@Override
+	public Car getCar(Integer id) {
+		// TODO Auto-generated method stub
+//		String hql = "from Car c where c.id=?";
+		String hql = "from Car c where c.zt=1 and c.id=?";
+		Query query = sessionFactory.getCurrentSession().createQuery(hql);
+		query.setInteger(0, Integer.valueOf(id));
+
+		return (Car) query.uniqueResult();
+	}
+
+	@Override
+	public List<Car> getAllCar(String cph, Integer page) {
+		// TODO Auto-generated method stub
+		
+		
+		List<Object> params = new ArrayList<Object>();
+		StringBuffer hql = new StringBuffer();
+//		hql.append("from Car c where 1=1 ");
+		hql.append("from Car c where c.zt=1 ");
+		
+		if(cph!=null && cph.length()>0){
+			hql.append(" and c.cph = ? ");
+			params.add(cph);
+		}
+		
+		hql.append("order by lrsj desc");
+		Query query = sessionFactory.getCurrentSession().createQuery(hql.toString());
+		
+		for(int i=0;i<params.size();i++) {
+			query.setParameter(i, params.get(i));
+		}
+		int begin = (page-1)*pageSize;
+		query.setFirstResult(begin);
+		query.setMaxResults(pageSize);
+
+		return query.list();
+	}
+
+	@Override
+	public Integer findTotalPage(String cph) {
+		// TODO Auto-generated method stub
+		
+		
+		List<Object> params = new ArrayList<Object>();
+		StringBuffer hql = new StringBuffer();
+//		hql.append("select count(*) from Car c where 1=1 ");
+		hql.append("select count(*) from Car c where c.zt=1 ");
+		
+		
+		if(cph!=null && cph.length()>0){
+			hql.append(" and c.cph = ? ");
+			params.add(cph);
+		}
+		
+		
+		Query query = sessionFactory.getCurrentSession().createQuery(hql.toString());
+		
+		for(int i=0;i<params.size();i++) {
+			query.setParameter(i, params.get(i));
+		}
+		
+		Object count = query.uniqueResult();
+		int rows = Integer.valueOf(count.toString());
+		if(rows % pageSize == 0) {
+			return rows/pageSize;
+		} else {
+			return rows/pageSize + 1;
+		}
+		
+		
+	}
+
+	@Override
+	public void addCar(Car car) {
+		// TODO Auto-generated method stub
+		car.setZt(1);
+		sessionFactory.getCurrentSession().save(car);
+	}
+
+	@Override
+	public boolean delCar(Integer id) {
+		// TODO Auto-generated method stub
+		String hql = "delete Car c where c.id = ?";
+		Query query = sessionFactory.getCurrentSession().createQuery(hql);
+		query.setInteger(0, Integer.valueOf(id));
+
+		return (query.executeUpdate() > 0);
+	}
+
+	@Override
+	public boolean modifyCar(Car car) {
+		// TODO Auto-generated method stub
+		
+		
+		StringBuffer sb = new StringBuffer();
+		sb.append("update Car c set p.cph = ?,");
+		sb.append("c.clxh = ?     ,");
+		sb.append("c.clpp = ?     ,");
+		sb.append("c.csys = ?     ,");
+		sb.append("c.yy = ?       ,");
+		sb.append("c.jysj = ?     ,");
+		sb.append("c.jybm = ?     ,");
+		sb.append("c.jyxm = ?     ,");
+		sb.append("c.jysfzh = ?   ,");
+		sb.append("c.lrsj = ?     ,");
+		sb.append("c.zt = ?        ");
+		sb.append("where c.id = ?  ");
+		
+		Query query = sessionFactory.getCurrentSession().createQuery(sb.toString());
+		
+		query.setString(0, car.getCph());
+		query.setString(1, car.getClxh());
+		query.setString(2, car.getClpp());
+		query.setString(3, car.getCsys());
+		query.setString(4, car.getYy());
+		query.setString(5, car.getJysj());
+		query.setString(6, car.getJybm());
+		query.setString(7, car.getJyxm());
+		query.setString(8, car.getJysfzh());
+		query.setDate(9, new Date());
+		query.setInteger(10, 1);//stateΪ1
+		query.setInteger(11, car.getId());
+
+
+		return (query.executeUpdate() > 0);
+	}
+
+	@Override
+	public boolean carState(Integer id) {
+		// TODO Auto-generated method stub
+		
+		String hql = "update Car c set c.zt=0 where c.id = ?";
+		Query query = sessionFactory.getCurrentSession().createQuery(hql);
+		query.setInteger(0, Integer.valueOf(id));
+		
+		return (query.executeUpdate() > 0);
+	}
+
+}

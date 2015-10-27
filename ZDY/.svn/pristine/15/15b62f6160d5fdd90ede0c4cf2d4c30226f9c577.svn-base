@@ -1,0 +1,18 @@
+package com.zdy.dao.impl;
+
+import java.util.List;
+
+import org.springframework.stereotype.Service;
+
+import com.zdy.dao.MenuDao;
+import com.zdy.dao.base.BaseJPADao;
+import com.zdy.entity.Menu;
+@Service("menuDao")
+public class MenuDaoImpl  extends BaseJPADao<Menu, Long> implements MenuDao{
+	/**
+	 * ����û�id��ѯ�û�
+	 */
+	public List<Menu> getMenuAll() {
+		return listAll();
+	}
+}

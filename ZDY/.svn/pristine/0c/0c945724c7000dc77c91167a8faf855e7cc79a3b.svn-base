@@ -1,0 +1,62 @@
+package com.zdy.service.impl;
+
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.zdy.dao.Person1Dao;
+import com.zdy.entity.Person;
+import com.zdy.service.Person1Manager;
+import com.zdy.utils.Page;
+@Service("person1Manager")
+public class Person1ManagerImpl implements Person1Manager{
+	
+	@Autowired
+    @Qualifier("person1Dao")
+	private Person1Dao person1Dao;
+
+	@Transactional(readOnly = true)
+	public Person getPerson(Person person) {
+		// TODO Auto-generated method stub
+		return person1Dao.getPerson(person);
+	}
+
+	@Transactional(readOnly = true)
+	public List<Person> getPersonAll() {
+		// TODO Auto-generated method stub
+		return person1Dao.getPersonAll();
+	}
+
+	@Transactional(readOnly = true)
+	public Page<Person> findPagePersonByIntegrateds(int start, int limit,
+			Map<String, Object> conditions) {
+		// TODO Auto-generated method stub
+		Page<Person> page = new Page<Person>();
+		page.setStart(start);
+		page.setLimit(limit);
+		return person1Dao.findPagePersonByIntegrateds(page, conditions);
+	}
+
+	@Transactional
+	public void modifyPerson(Person person) {
+		// TODO Auto-generated method stub
+		person1Dao.modifyPerson(person);
+	}
+
+	@Transactional
+	public void savePerson(Person person) {
+		// TODO Auto-generated method stub
+		person1Dao.savePerson(person);
+	}
+
+	@Transactional
+	public void modifyPersonState(Person person) {
+		// TODO Auto-generated method stub
+		person1Dao.modifyPersonState(person);
+	}
+
+}

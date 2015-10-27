@@ -1,0 +1,116 @@
+package com.zdy.controller;
+
+import java.io.PrintWriter;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+import com.zdy.entity.Person;
+import com.zdy.service.Person1Manager;
+import com.zdy.utils.Page;
+
+@Controller
+@RequestMapping("/person1")
+public class Person1Controller {
+	
+	@Autowired
+    @Qualifier("person1Manager")
+	private Person1Manager person1Manager;
+	
+	@RequestMapping("/getPersonPageAll")
+	public void getAllPerson(Integer page,Integer rows, Person person , HttpServletResponse response) {
+		String str = "";
+		
+		Map<String, Object> personMap = new HashMap<String, Object>();
+		if(person.getXm()!=null){
+			personMap.put("xm", person.getXm());
+		}
+		if(person.getSfzh()!=null){
+			personMap.put("sfzh", person.getSfzh());
+		}
+		try {
+			Page<Person> pages = person1Manager.findPagePersonByIntegrateds((--page)*rows, rows,personMap);
+			str = PagetoString(pages);
+			response.setContentType("application/json");
+			PrintWriter out = response.getWriter();
+			out.write(str);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	
+	
+	public String PagetoString(Page<Person> page){
+		String str = "{\"total\":"+page.getTotal()+",\"rows\":[";
+		List<Person> pageList= page.getRoot();
+		if(pageList!=null&&pageList.size()>0){
+			String qx = "сп";
+			Person person = new Person();
+			for (int i = 0; i < pageList.size(); i++) {
+				person = strTrim(pageList.get(i));
+//				if(user.getQx().equals("1"))qx = "нч";
+//				str+="{\"yhm\":\""+user.getUsername()+"\"," +
+//						"\"mm\":\""+user.getMm()+"\"," +
+//						"\"xm\":\""+user.getXm()+"\"," +
+//						"\"qx\":\""+qx+"\"}";
+				
+				
+				str+="{\"xm\":\""+person.getXm()+"\"," +
+						"\"sfzh\":\""+person.getSfzh()+"\"," +
+						"\"xb\":\""+person.getXb()+"\"," +
+						"\"mz\":\""+person.getMz()+"\"," +
+						"\"csrq\":\""+person.getCsrq()+"\"," +
+						"\"xzz\":\""+person.getXzz()+"\"," +
+						"\"lrsj\":\""+person.getLrsj()+"\"," +
+						"\"xgzdw\":\""+person.getXgzdw()+"\"," +
+						"\"sjh\":\""+person.getSjh()+"\"," +
+						"\"yy\":\""+person.getYy()+"\"," +
+						"\"jysj\":\""+person.getJysj()+"\"," +
+						"\"jybm\":\""+person.getJybm()+"\"," +
+						"\"jysfzh\":\""+person.getJysfzh()+"\"," +
+						"\"jyxm\":\""+person.getJyxm()+"\"}";
+				
+				if(i!=pageList.size()-1){
+					str+=",";
+				}
+			}
+		}
+		str+="]}";
+		return str;
+	}
+	public Person strTrim(Person person){
+		person.setXm(person.getXm()==null?"":person.getXm());
+		person.setSfzh(person.getSfzh()==null?"":person.getSfzh());
+		person.setXb(person.getXb()==null?"":person.getXb());
+		person.setMz(person.getMz()==null?"":person.getMz());
+		person.setCsrq(person.getCsrq()==null?"":person.getCsrq());
+		person.setXzz(person.getXzz()==null?"":person.getXzz());
+		person.setLrsj(person.getLrsj()==null?null:person.getLrsj());
+		person.setXgzdw(person.getXgzdw()==null?"":person.getXgzdw());
+		person.setSjh(person.getSjh()==null?"":person.getSjh());
+		person.setYy(person.getYy()==null?"":person.getYy());
+		person.setJysj(person.getJysj()==null?"":person.getJysj());
+		person.setJybm(person.getJybm()==null?"":person.getJybm());
+		person.setJysfzh(person.getJysfzh()==null?"":person.getJysfzh());
+		person.setJyxm(person.getJyxm()==null?"":person.getJyxm());
+		return person;
+	}
+
+	
+	@RequestMapping("/getPersonAll")
+	public String getPersonAll(HttpServletRequest request) {
+		
+		List<Person> person1List = person1Manager.getPersonAll();
+		request.setAttribute("person1List", person1List);
+		return "person/listperson";
+	}
+}

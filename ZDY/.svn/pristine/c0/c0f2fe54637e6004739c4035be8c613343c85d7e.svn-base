@@ -1,0 +1,95 @@
+package com.zdy.dao.impl;
+
+import java.math.BigDecimal;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.persistence.Query;
+
+import org.springframework.stereotype.Service;
+
+import com.zdy.dao.Person1Dao;
+import com.zdy.dao.base.BaseJPADao;
+import com.zdy.entity.Person;
+import com.zdy.utils.Page;
+@Service("person1Dao")
+public class Person1DaoImpl extends BaseJPADao<Person, Long> implements Person1Dao{
+
+	@Override
+	public Person getPerson(Person person) {
+		// TODO Auto-generated method stub
+		
+		Map<String, Object> personMap = new HashMap<String, Object>();
+//条件加入
+		return findUniqueBy(personMap);
+	}
+
+	@Override
+	public List<Person> getPersonAll() {
+		// TODO Auto-generated method stub
+		return listAll();
+	}
+
+	@Override
+	public Page<Person> findPagePersonByIntegrateds(Page<Person> page,
+			Map<String, Object> conditions) {
+		// TODO Auto-generated method stub
+
+		String fromSql = "from z_person t ";
+		if(conditions!=null && conditions.size()>0){
+			int i = 0;
+			Object[] values = new Object[conditions.size()];
+			for (Map.Entry<String, Object> property : conditions.entrySet()) {
+				if (i == 0) {
+					fromSql += " where";
+				} else {
+					fromSql += " and";
+				}
+				fromSql += " t." + property.getKey() + "=?";
+				values[i++] = property.getValue();
+			}
+		}
+		
+		fromSql += " order by t.id desc";
+		String countSql = "select count(1) " + fromSql;
+		String sql = "select t.* " + fromSql;
+		Query query = getEntityManager().createNativeQuery(countSql);
+		BigDecimal count = (BigDecimal) query.getSingleResult();
+		page.setTotal(count.longValue());
+		
+		query = getEntityManager().createNativeQuery(sql, this.getEntityClass());
+		query.setFirstResult(page.getStart());
+		query.setMaxResults(page.getLimit());
+		@SuppressWarnings("unchecked")
+		List<Person> result = query.getResultList();
+		page.setRoot(result);
+		
+		return page;
+	}
+
+	@Override
+	public void modifyPerson(Person person) {
+		// TODO Auto-generated method stub
+		super.update(person);
+	}
+
+	@Override
+	public void savePerson(Person person) {
+		// TODO Auto-generated method stub
+		super.save(person);
+	}
+
+	@Override
+	public void modifyPersonState(Person person) {
+		// TODO Auto-generated method stub
+		
+		Map<String, Object> personMap = new HashMap<String, Object>();
+		personMap.put("id", person.getId());
+		Person temp = super.findUniqueBy(personMap);
+		temp.setZt(0);
+		super.update(temp);
+		
+	}
+
+}

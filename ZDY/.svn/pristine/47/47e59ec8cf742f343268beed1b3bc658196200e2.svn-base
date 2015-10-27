@@ -1,0 +1,63 @@
+package com.zdy.service.impl;
+
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.zdy.dao.Car1Dao;
+import com.zdy.entity.Car;
+import com.zdy.service.Car1Manager;
+import com.zdy.utils.Page;
+@Service("car1Manager")
+public class Car1ManagerImpl implements Car1Manager{
+	
+	@Autowired
+    @Qualifier("car1Dao")
+	private Car1Dao car1Dao;
+
+	@Transactional(readOnly = true)
+	public Car getCar(Car car) {
+		// TODO Auto-generated method stub
+		return car1Dao.getCar(car);
+	}
+
+	@Transactional(readOnly = true)
+	public List<Car> getCarAll() {
+		// TODO Auto-generated method stub
+		return car1Dao.getCarAll();
+	}
+
+	@Transactional(readOnly = true)
+	public Page<Car> findPageCarByIntegrateds(int start, int limit,
+			Map<String, Object> conditions) {
+		// TODO Auto-generated method stub
+		
+		Page<Car> page = new Page<Car>();
+		page.setStart(start);
+		page.setLimit(limit);
+		return car1Dao.findPageCarByIntegrateds(page, conditions);
+	}
+
+	@Transactional
+	public void modifyCar(Car car) {
+		// TODO Auto-generated method stub
+		car1Dao.modifyCar(car);
+	}
+
+	@Transactional
+	public void saveCar(Car car) {
+		// TODO Auto-generated method stub
+		car1Dao.saveCar(car);
+	}
+
+	@Transactional
+	public void modifyCarState(Car car) {
+		// TODO Auto-generated method stub
+		car1Dao.modifyCarState(car);
+	}
+
+}

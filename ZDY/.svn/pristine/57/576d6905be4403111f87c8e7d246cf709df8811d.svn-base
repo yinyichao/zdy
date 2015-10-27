@@ -1,0 +1,109 @@
+<%@ page language="java" import="java.util.*" pageEncoding="utf-8"%>
+<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%
+String path = request.getContextPath();
+String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+path+"/";
+%>
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>车辆信息管理</title>
+<link href="${pageContext.request.contextPath }/util/css/style.css" rel="stylesheet" type="text/css" />
+
+<script src="${pageContext.request.contextPath }/js/jquery-1.4.3.js" type="text/javascript"></script>
+<script src="${pageContext.request.contextPath }/js/jquery.form.js" type="text/javascript"></script>
+
+
+<script type="text/javascript">
+	
+	$(function() {
+	var flag = false;
+		$('#cph').blur(function() {
+			$('#msg').css("color", "red");
+			var cph = $(this).val();
+			if (cph == "") {
+				$('#msg').text('车牌号不能为空');
+				return;
+			}else{
+				$('#msg').css("color", "green");
+				$('#msg').text('可以');
+				flag = true;
+			}
+
+		});
+
+		$('#addsumbit').click(function() {
+			if (!flag&&$("#cid").val()==null) {
+				return;
+			}
+            var options = {
+                url: '${pageContext.request.contextPath }/car/addCar.do',
+                type: 'post',
+                dataType: 'text',
+                data: $("#adduserfrom").serialize(),
+                success: function (data) {
+                	$("input[type=reset]").trigger("click");
+                    alert(data);
+                }
+            };
+            $.ajax(options);
+            return false;
+		});
+
+	});
+</script>
+</head>
+
+<body>
+
+	<!--<div class="place">
+		<span>位置：</span>
+		<ul class="placeul">
+			<li><a href="#">首页</a>
+			</li>
+			<li><a href="#">表单</a>
+			</li>
+		</ul>
+	</div>-->
+
+	<div class="formbody">
+
+		<div class="formtitle">
+			<span>基本信息</span>
+		</div>
+		<form action="" method="post" id="adduserfrom">
+			<ul class="forminfo">
+				<li>
+					<label>车牌号</label><input name="cph" type="text" class="dfinput" id="cph" value="${zcar.cph}"/><i id="msg">必填</i>
+				</li>
+				<li>
+					<label>车辆品牌</label><input name="clpp" type="text" class="dfinput" value="${zcar.clpp}"/>
+				</li>
+				<li>
+					<label>车辆型号</label><input name="clxh" type="text" class="dfinput" value="${zcar.clxh}"/>
+					<input name="zt" type="hidden" value="0"/>
+					<input name="id" id="cid" type="hidden" value="${zcar.id}"/>
+					<input name="jybm" type="hidden" value="${zcar.jybm}"/>
+					<input name="jysfzh" type="hidden" value="${zcar.jysfzh}"/>
+					<input name="jysj" type="hidden" value="${zcar.jysj}"/>
+					<input name="jyxm" type="hidden" value="${zcar.jyxm}"/>
+				</li>
+				<li>
+					<label>车身颜色</label><input name="csys" type="text" class="dfinput" value="${zcar.csys}"/>
+				</li>
+				<li>
+					<label>原因</label><input name="yy" type="text" class="dfinput" value="${zcar.yy}"/>
+				</li>
+				<li>
+					<input type="reset" name="reset" style="display: none;" />
+					<label>&nbsp;</label><input type="button" id="addsumbit" class="btn" value="确认保存" />
+				</li>
+			</ul>
+		</form>
+	</div>
+
+</body>
+
+</html>

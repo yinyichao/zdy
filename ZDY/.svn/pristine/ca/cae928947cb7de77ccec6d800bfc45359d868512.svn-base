@@ -1,0 +1,17 @@
+package com.zdy.dao.impl;
+
+import org.springframework.stereotype.Service;
+
+import com.zdy.dao.UserRoleDao;
+import com.zdy.dao.base.BaseJPADao;
+import com.zdy.entity.UserRole;
+@Service("userRoleDao")
+public class UserRoleDaoImpl  extends BaseJPADao<UserRole, Long> implements UserRoleDao{
+	public void saveUserRole(UserRole userRole){
+		this.save(userRole);
+	}
+	public void delUserRole(Long userId){
+		String sql = "delete UserRole where userid = ?";
+		this.batchExecute(sql,userId);
+	}
+}

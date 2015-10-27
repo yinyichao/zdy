@@ -1,0 +1,26 @@
+package com.zdy.service;
+
+import java.util.List;
+
+import com.zdy.entity.Car;
+
+public interface CarManager {
+
+	
+	
+	public Car getCar(Integer id);
+
+	public List<Car> getAllCar(String cph,Integer page);
+	
+	public Integer findTotalPage(String cph);
+
+	public void addCar(Car car);
+
+	public boolean delCar(Integer id);
+
+	public boolean modifyCar(Car car);
+	
+	//Âß¼­É¾³ý
+	public boolean carState(Integer id);
+	
+}

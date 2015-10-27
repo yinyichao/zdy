@@ -1,0 +1,105 @@
+package com.zdy.controller;
+
+import java.io.PrintWriter;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+import com.zdy.entity.Car;
+import com.zdy.service.Car1Manager;
+import com.zdy.utils.Page;
+
+
+@Controller
+@RequestMapping("/car1")
+public class Car1Controller {
+
+	
+	@Autowired
+    @Qualifier("car1Manager")
+	private Car1Manager car1Manager;
+	
+	
+	
+	@RequestMapping("/getCarPageAll")
+	public void getAllCar(Integer page,Integer rows, Car car , HttpServletResponse response) {
+		String str = "";
+		
+		Map<String, Object> carMap = new HashMap<String, Object>();
+		
+		if(car.getCph()!=null){
+			carMap.put("cph", car.getCph());
+		}
+		try {
+			Page<Car> pages = car1Manager.findPageCarByIntegrateds((--page)*rows, rows,carMap);
+			str = PagetoString(pages);
+			response.setContentType("application/json");
+			PrintWriter out = response.getWriter();
+			out.write(str);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	
+	public String PagetoString(Page<Car> page){
+		String str = "{\"total\":"+page.getTotal()+",\"rows\":[";
+		List<Car> pageList= page.getRoot();
+		if(pageList!=null&&pageList.size()>0){
+			String qx = "сп";
+			Car person = new Car();
+			for (int i = 0; i < pageList.size(); i++) {
+				person = strTrim(pageList.get(i));
+//				if(user.getQx().equals("1"))qx = "нч";
+//				str+="{\"yhm\":\""+user.getUsername()+"\"," +
+//						"\"mm\":\""+user.getMm()+"\"," +
+//						"\"xm\":\""+user.getXm()+"\"," +
+//						"\"qx\":\""+qx+"\"}";
+				
+				
+				str+="{\"cph\":\""+person.getCph()+"\"," +
+						"\"clxh\":\""+person.getClxh()+"\"," +
+						"\"clpp\":\""+person.getClpp()+"\"," +
+						"\"csys\":\""+person.getCsys()+"\"," +
+						"\"yy\":\""+person.getYy()+"\"," +
+						"\"jysj\":\""+person.getJysj()+"\"," +
+						"\"jybm\":\""+person.getJybm()+"\"," +
+						"\"jyxm\":\""+person.getJyxm()+"\"," +
+						"\"jysfzh\":\""+person.getJysfzh()+"\"," +
+						"\"lrsj\":\""+person.getLrsj()+"\"}";
+				
+				if(i!=pageList.size()-1){
+					str+=",";
+				}
+			}
+		}
+		str+="]}";
+		return str;
+	}
+	public Car strTrim(Car car){
+		car.setCph(car.getCph()==null?"":car.getCph());
+		car.setClxh(car.getClxh()==null?"":car.getClxh());
+		car.setClpp(car.getClpp()==null?"":car.getClpp());
+		car.setCsys(car.getCsys()==null?"":car.getCsys());
+		car.setYy(car.getYy()==null?"":car.getYy());
+		car.setJysj(car.getJysj()==null?"":car.getJysj());
+		car.setLrsj(car.getLrsj()==null?null:car.getLrsj());
+		car.setJybm(car.getJybm()==null?"":car.getJybm());
+		car.setJyxm(car.getJyxm()==null?"":car.getJyxm());
+		car.setJysfzh(car.getJysfzh()==null?"":car.getJysfzh());
+		return car;
+	}
+	
+	@RequestMapping("/getCarAll")
+	public String getCarAll(HttpServletRequest request) {
+		return "chaxun";
+	}
+}

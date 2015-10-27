@@ -1,0 +1,18 @@
+package com.zdy.dao.impl;
+
+import java.util.List;
+
+import org.springframework.stereotype.Service;
+
+import com.zdy.dao.ResourceDao;
+import com.zdy.dao.base.BaseJPADao;
+import com.zdy.entity.Resources;
+@Service("resourceDao")
+public class ResourceDaoImpl  extends BaseJPADao<Resources, Long> implements ResourceDao{
+	/**
+	 * ����û�id��ѯ�û�
+	 */
+	public List<Resources> getResourceAll() {
+		return listAll();
+	}
+}

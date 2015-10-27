@@ -1,0 +1,36 @@
+package com.zdy.controller;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+@Controller
+@RequestMapping("/main")
+public class MainController {
+	
+	
+	@RequestMapping("/main")
+	public String main() {
+		return "main/main";
+	} 
+	
+	@RequestMapping("/rightshow")
+	public String rightshow() {
+		return "main/rightshow";
+	} 
+	
+	@RequestMapping("/left")
+	public String left() {
+		return "main/left";
+	} 
+	
+	@RequestMapping("/index")
+	public String index() {
+		return "main/index";
+	} 
+	
+	@RequestMapping("/top")
+	public String top() {
+		return "main/top";
+	} 
+	
+}

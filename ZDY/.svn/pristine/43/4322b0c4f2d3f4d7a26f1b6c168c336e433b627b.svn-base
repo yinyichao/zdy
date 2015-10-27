@@ -1,0 +1,68 @@
+package com.zdy.service;
+
+import java.util.List;
+
+import javax.annotation.Resource;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.zdy.dao.PersonDao;
+import com.zdy.entity.Person;
+
+//@Service("PersonManager")
+@Service("personManager")
+public class PersonManagerImpl implements PersonManager{
+	
+	@Resource
+	private PersonDao personDao;
+	
+	
+	@Autowired
+	public void setPersonDao(PersonDao personDao) {
+		this.personDao = personDao;
+	}
+
+	@Override
+	public Person getPerson(Integer id) {
+		// TODO Auto-generated method stub
+		return personDao.getPerson(id);
+	}
+
+	@Override
+	public List<Person> getAllPerson(String xm, String sfzh, Integer page) {
+		// TODO Auto-generated method stub
+		return personDao.getAllPerson(xm, sfzh, page);
+	}
+
+	@Override
+	public Integer findTotalPage(String xm, String sfzh) {
+		// TODO Auto-generated method stub
+		return personDao.findTotalPage(xm, sfzh);
+	}
+
+	@Override
+	public void addPerson(Person person) {
+		// TODO Auto-generated method stub
+		personDao.addPerson(person);
+	}
+
+	@Override
+	public boolean delPerson(Integer id) {
+		// TODO Auto-generated method stub
+		return personDao.delPerson(id);
+	}
+
+	@Override
+	public boolean modifyPerson(Person person) {
+		// TODO Auto-generated method stub
+		return personDao.modifyPerson(person);
+	}
+
+	@Override
+	public boolean personState(Integer id) {
+		// TODO Auto-generated method stub
+		return personDao.personState(id);
+	}
+
+}

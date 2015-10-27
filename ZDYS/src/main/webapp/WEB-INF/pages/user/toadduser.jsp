@@ -1,0 +1,189 @@
+<%@ page language="java" import="java.util.*" pageEncoding="utf-8"%>
+<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%
+String path = request.getContextPath();
+String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+path+"/";
+%>
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>用户管理</title>
+<link href="${pageContext.request.contextPath }/util/css/style.css" rel="stylesheet" type="text/css" />
+
+<script src="${pageContext.request.contextPath }/js/jquery-1.4.3.js" type="text/javascript"></script>
+<script src="${pageContext.request.contextPath }/js/jquery.form.js" type="text/javascript"></script>
+
+
+<script type="text/javascript">
+	
+	$(function() {
+	var flag = false;
+		$('#username').blur(function() {
+			var username = $(this).val();
+			if (username == "") {
+				$('#msg').css("color", "red");
+				$('#msg').text('用户名不能为空');
+				return;
+			}
+			var patrn = /^[A-Za-z0-9]+$/;
+			if (!patrn.exec(username)) {
+				$('#msg').css("color", "red");
+				$("#msg").text("请不要输入非法字符");
+				return;
+			}
+			$.ajax({
+						type : "POST",
+						url : "${pageContext.request.contextPath }/user/checkUserName.do",
+						data : {
+							username : username
+						},
+						success : function(result) {
+							if (result == 0) {
+								flag = true;
+								$('#msg').text("当前用户名可以注册");
+								$('#msg').css({color : "green"});
+							} else {
+								flag = false;
+								$('#msg').text("当前用户名己存在");
+								$('#msg').css({color : "red"});
+							}
+						}
+					});
+				});
+		$('#password').blur(function() {
+			
+			var password = $(this).val();
+			if (password == "") {
+				$('#msg1').css("color", "red");
+				$('#msg1').text('密码不能为空');
+				return;
+			}else{
+				var patrn = /^[A-Za-z0-9]+$/;
+				if (!patrn.exec(password)) {
+					$('#msg1').css("color", "red");
+					$("#msg1").text("请不要输入非法字符");
+					return;
+				}
+				$('#msg1').css("color", "green");
+				$('#msg1').text('可以');
+				flag = true;
+			}
+
+		});
+		$('#name').blur(function() {
+			
+			var name = $(this).val();
+			if (name == "") {
+				$('#msg2').css("color", "red");
+				$('#msg2').text('姓名不能为空');
+				return;
+			}else{
+				$('#msg2').css("color", "green");
+				$('#msg2').text('可以');
+				flag = true;
+			}
+
+		});
+		$('#addsumbit').click(function() {
+			var name = $('#name').val();
+			var password = $('#password').val();
+			if (password == "") {
+				$('#msg1').text('请输入密码');
+				$('#msg1').css({color : "red"});
+				return;
+			} else {
+				$('#msg1').text('可以');
+				$('#msg1').css({color : "black"});
+			}
+			if (name == "") {
+				$('#msg2').text('请输入真实姓名');
+				$('#msg2').css({color : "red"});
+				return;
+			} else {
+				$('#msg2').text('可以');
+				$('#msg2').css({color : "black"});
+			}
+			if (!flag&&$("#userId").val()==null) {
+				return;
+			}
+            var options = {
+                url: '${pageContext.request.contextPath }/user/addUser.do',
+                type: 'post',
+                dataType: 'text',
+                data: $("#adduserfrom").serialize(),
+                success: function (data) {
+                    alert(data);
+                    if($("#userId").val()!=""){
+                    	window.close();
+                    }
+                    $("input[type=reset]").trigger("click");
+                }
+            };
+            $.ajax(options);
+            return false;
+		});
+
+	});
+</script>
+</head>
+
+<body onunload="window.opener.location.reload();">
+
+	<!-- <div class="place">
+		<span>位置：</span>
+		<ul class="placeul">
+			<li><a href="#">首页</a>
+			</li>
+			<li><a href="#">表单</a>
+			</li>
+		</ul>
+	</div> -->
+
+	<div class="formbody">
+
+		<div class="formtitle">
+			<span>基本信息</span>
+		</div>
+		<form action="" method="post" id="adduserfrom">
+			<ul class="forminfo">
+				<li>
+					<label>用户名</label><input name="username" type="text" class="dfinput" id="username" value="${zuser.username}"/><i id="msg">必填</i>
+				</li>
+				<c:if test="${empty zuser.id }">
+				<li>
+					<label>密码</label><input name="password" type="text" class="dfinput" id="password" value="${zuser.password}"/><i id="msg1">必填</i>
+				</li>
+				</c:if>
+				<li>
+					<label>真实姓名</label><input name="xm" type="text" class="dfinput" id="name" value="${zuser.xm}"/><i id="msg2">必填</i>
+					<input name="zt" type="hidden" value="0"/>
+					<input name="id" type="hidden" value="${zuser.id}" id="userId"/>
+					<c:if test="${not empty zuser.id }"><input name="password" type="hidden" value="${zuser.password}"/></c:if>
+				</li>
+				<li>
+					<label>部门</label><input name="bm" type="text" class="dfinput" value="${zuser.bm}"/>
+				</li>
+				<li>
+					<label>手机号</label><input name="sj" type="text" class="dfinput" value="${zuser.sj}"/>
+				</li>
+				<li><label>权限</label> 
+				    <div class="vocation">
+					    <select id="role" class="vocation" name="qx" >
+					    	<option value="0" <c:if test="${zuser.qx != 1 }">selected="selected"  </c:if>>开启</option>
+					    	<option value="1"<c:if test="${zuser.qx == 1 }">selected="selected"  </c:if>>关闭</option>
+					    </select> 
+				    </div>
+				</li>
+				<li>
+					<input type="reset" name="reset" style="display: none;" />
+					<label>&nbsp;</label><input type="button" id="addsumbit" class="btn" value="确认保存" />
+				</li>
+			</ul>
+		</form>
+	</div>
+
+</body>
+
+</html>

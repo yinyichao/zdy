@@ -1,0 +1,129 @@
+package com.zdy.controller;
+
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.Date;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+import com.zdy.entity.Person;
+import com.zdy.service.PersonManager;
+
+@Controller
+@RequestMapping("/person")
+public class PersonController {
+	
+	@Resource(name = "personManager")
+	private PersonManager personManager;
+	
+	@RequestMapping("/getAllPerson")
+	public String getAllPerson(Person person , Integer page , ModelMap modelMap){
+		
+		if(page==null){
+			page=1;
+		}
+		modelMap.addAttribute("personList", personManager.getAllPerson(person.getXm(), person.getSfzh(), page));
+		modelMap.addAttribute("findTotalPage", personManager.findTotalPage(person.getXm(), person.getSfzh()));
+		modelMap.addAttribute("page", page);
+		modelMap.addAttribute("xm", person.getXm());
+		modelMap.addAttribute("sfzh", person.getSfzh());
+		return "person/index";
+	}
+	
+	
+	@RequestMapping("/getPerson")
+	public String getPerson(Person person,ModelMap modelMap){
+		
+		modelMap.addAttribute("person",personManager.getPerson(person.getId()));
+		return "person/editperson";
+	}
+	
+	
+	@RequestMapping("/addPerson")
+	public String addPerson(Person person , HttpServletRequest request){
+		System.out.println("addPerson test ");
+		System.out.println("addPerson test 1 :"+person.getXm());
+		
+		person.setLrsj(new Date());
+		personManager.addPerson(person);
+		return "redirect:/person/getAllPerson.do";
+	}
+	
+	
+	@RequestMapping("/delPerson")
+	public void delPerson(Person person , HttpServletResponse response){
+		
+		boolean flag = personManager.delPerson(person.getId());
+		
+		String result = "{\"result\":\"error\"}";
+		if(flag){
+			result = "{\"result\":\"success\"}";
+		}
+		response.setContentType("application/json");
+		
+		try {
+			PrintWriter out = response.getWriter();
+			out.write(result);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+	}
+	
+	
+	@RequestMapping("/modifyPerson")
+	public String modifyPerson(Person person , ModelMap modelMap){
+		
+		boolean flag = personManager.modifyPerson(person);
+		
+		if(flag){
+			person = personManager.getPerson(person.getId());
+			modelMap.addAttribute("person",person);
+			return "redirect:/person/getAllPerson.do";
+		}else {
+			return "error";
+		}
+		
+	}
+	
+	
+	
+	@RequestMapping("/toAddPerson")
+	public String toAddPerson() {
+		System.out.println("test personadd--------------------------");
+		return "person/addperson";
+	}
+	
+	
+	@RequestMapping("/toUpdatePerson")
+	public String toUpdatePerson() {
+		return "perosn/updateperson";
+	}
+	
+	
+	@RequestMapping("/personState")
+	public String personState(Person person , HttpServletResponse response) {
+		boolean flag = personManager.personState(person.getId());
+		
+		String result = "{\"result\":\"error\"}";
+		if(flag){
+			result = "{\"result\":\"success\"}";
+		}
+		response.setContentType("application/json");
+		
+		try {
+			PrintWriter out = response.getWriter();
+			out.write(result);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return "redirect:/person/getAllPerson.do";
+	}
+
+}

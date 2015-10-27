@@ -1,0 +1,18 @@
+package com.zdy.dao;
+
+import java.util.List;
+import java.util.Map;
+
+import com.zdy.entity.Person;
+import com.zdy.utils.Page;
+
+public interface Person1Dao {
+	
+	public Person getPerson(Person person);
+	public List<Person> getPersonAll();
+	public Page<Person> findPagePersonByIntegrateds(Page<Person> page, Map<String, Object> conditions);
+	public void modifyPerson(Person person);
+	public void savePerson(Person person);
+	public void modifyPersonState(Person person);//Âß¼­É¾
+
+}

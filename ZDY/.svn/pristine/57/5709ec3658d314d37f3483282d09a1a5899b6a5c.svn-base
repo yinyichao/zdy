@@ -1,0 +1,68 @@
+package com.zdy.service;
+
+import java.util.List;
+
+import javax.annotation.Resource;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.zdy.dao.CarDao;
+import com.zdy.dao.PersonDao;
+import com.zdy.entity.Car;
+
+@Service("carManager")
+public class CarManagerImpl implements CarManager{
+	
+	@Resource
+	private CarDao carDao;
+	
+	
+	@Autowired
+	public void setCarDao(CarDao carDao) {
+		this.carDao = carDao;
+	}
+
+	@Override
+	public Car getCar(Integer id) {
+		// TODO Auto-generated method stub
+		return carDao.getCar(id);
+	}
+
+	@Override
+	public List<Car> getAllCar(String cph, Integer page) {
+		// TODO Auto-generated method stub
+		return carDao.getAllCar(cph, page);
+	}
+
+	@Override
+	public Integer findTotalPage(String cph) {
+		// TODO Auto-generated method stub
+		return carDao.findTotalPage(cph);
+	}
+
+	@Override
+	public void addCar(Car car) {
+		// TODO Auto-generated method stub
+		carDao.addCar(car);
+	}
+
+	@Override
+	public boolean delCar(Integer id) {
+		// TODO Auto-generated method stub
+		return carDao.delCar(id);
+	}
+
+	@Override
+	public boolean modifyCar(Car car) {
+		// TODO Auto-generated method stub
+		return carDao.modifyCar(car);
+	}
+
+	@Override
+	public boolean carState(Integer id) {
+		// TODO Auto-generated method stub
+		return carDao.carState(id);
+	}
+
+}

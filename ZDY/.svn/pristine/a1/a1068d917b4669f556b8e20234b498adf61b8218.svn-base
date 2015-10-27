@@ -1,0 +1,40 @@
+log4j.rootLogger=INFO,CONSOLE,RFID
+ 
+log4j.appender.RFID=org.apache.log4j.DailyRollingFileAppender
+log4j.appender.RFID.file=${catalina.home}/logs/rfid.log
+log4j.appender.RFID.encoding=UTF-8
+log4j.appender.RFID.DatePattern='.'yyyy-MM-dd
+log4j.appender.RFID.layout=com.hctec.log.CustomPatternLayout
+log4j.appender.RFID.layout.conversionPattern = %d %-5p [%t] %c.%M[%L] %m%n
+
+log4j.appender.RFID.append=true
+
+log4j.appender.CONSOLE=org.apache.log4j.ConsoleAppender
+#log4j.appender.CONSOLE.encoding=UTF-8
+log4j.appender.CONSOLE.Target=System.out
+log4j.appender.CONSOLE.layout=com.hctec.log.CustomPatternLayout
+log4j.appender.CONSOLE.layout.conversionPattern = %d %-5p [%t] %c.%M[%L] %m%n
+
+log4j.logger.org.springframework=WARN
+
+# Control logging for other open source packages
+log4j.logger.com.opensymphony.oscache=ERROR
+log4j.logger.net.sf.navigator=ERROR
+log4j.logger.net.sf.acegisecurity=WARN
+log4j.logger.net.sf.acegisecurity.intercept.event.LoggerListener=WARN
+log4j.logger.org.apache.commons=ERROR
+log4j.logger.org.apache.struts=WARN
+log4j.logger.org.displaytag=ERROR
+log4j.logger.com.ibatis.db=WARN
+log4j.logger.org.apache.velocity=WARN
+
+# Don't show debug logs for WebTest
+log4j.logger.com.canoo.webtest=WARN
+
+# All hibernate log output of "info" level or higher goes to stdout.
+# For more verbose logging, change the "info" to "debug" on the last line.
+log4j.logger.org.hibernate.ps.PreparedStatementCache=WARN
+log4j.logger.org.hibernate=WARN
+
+
+   

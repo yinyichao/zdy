@@ -1,0 +1,23 @@
+package com.zdy.controller;
+
+import javax.servlet.http.HttpServletRequest;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+@Controller
+@RequestMapping("/frame")
+public class FrameController {
+	@RequestMapping("/getTop")
+	public String getUser(HttpServletRequest request) {
+			return "main/top";
+	}
+	@RequestMapping("/getLeft")
+	public String getLeft(HttpServletRequest request) {
+			return "main/left";
+	}
+	@RequestMapping("/getIndex")
+	public String getIndex(HttpServletRequest request) {
+			return "main/index";
+	}
+}

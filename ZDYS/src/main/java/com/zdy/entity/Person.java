@@ -1,0 +1,199 @@
+package com.zdy.entity;
+
+import java.io.Serializable;
+import java.util.Date;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+
+@Entity
+@Table(name = "z_person")
+public class Person implements Serializable{
+	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -4411439535229609292L;
+
+	private Long id;
+	
+	private String xm;
+	
+	private String sfzh;
+	
+	private String xb;
+	
+	private String mz;
+	
+	private String csrq;
+	
+	private String xzz;
+	
+	private Date lrsj;
+	
+	private String xgzdw;
+	
+	private String sjh;
+	
+	private String yy;
+	
+	private String jysj;
+	
+	private String jybm;
+	
+	private String jysfzh;
+	
+	private String jyxm;
+	
+	private Integer zt;//1��0ɾ��
+
+	
+	
+	@Id	
+	@Column(name="id", unique = true, nullable = false, precision = 10, scale = 0)	
+	@SequenceGenerator(name="person_seq",allocationSize=1,initialValue=1, sequenceName="SQ_ZPERSON_ID")
+	@GeneratedValue(strategy = GenerationType.SEQUENCE ,generator="person_seq")
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	public String getXm() {
+		return xm;
+	}
+
+	public void setXm(String xm) {
+		this.xm = xm;
+	}
+
+	public String getSfzh() {
+		return sfzh;
+	}
+
+	public void setSfzh(String sfzh) {
+		this.sfzh = sfzh;
+	}
+
+	public String getXb() {
+		return xb;
+	}
+
+	public void setXb(String xb) {
+		this.xb = xb;
+	}
+
+	public String getMz() {
+		return mz;
+	}
+
+	public void setMz(String mz) {
+		this.mz = mz;
+	}
+
+	public String getCsrq() {
+		return csrq;
+	}
+
+	public void setCsrq(String csrq) {
+		this.csrq = csrq;
+	}
+
+	public String getXzz() {
+		return xzz;
+	}
+
+	public void setXzz(String xzz) {
+		this.xzz = xzz;
+	}
+
+	public Date getLrsj() {
+		return lrsj;
+	}
+
+	public void setLrsj(Date lrsj) {
+		this.lrsj = lrsj;
+	}
+
+	public String getXgzdw() {
+		return xgzdw;
+	}
+
+	public void setXgzdw(String xgzdw) {
+		this.xgzdw = xgzdw;
+	}
+
+	public String getSjh() {
+		return sjh;
+	}
+
+	public void setSjh(String sjh) {
+		this.sjh = sjh;
+	}
+
+	public String getYy() {
+		return yy;
+	}
+
+	public void setYy(String yy) {
+		this.yy = yy;
+	}
+
+	public String getJysj() {
+		return jysj;
+	}
+
+	public void setJysj(String jysj) {
+		this.jysj = jysj;
+	}
+
+	public String getJybm() {
+		return jybm;
+	}
+
+	public void setJybm(String jybm) {
+		this.jybm = jybm;
+	}
+
+	public String getJysfzh() {
+		return jysfzh;
+	}
+
+	public void setJysfzh(String jysfzh) {
+		this.jysfzh = jysfzh;
+	}
+
+	public String getJyxm() {
+		return jyxm;
+	}
+
+	public void setJyxm(String jyxm) {
+		this.jyxm = jyxm;
+	}
+
+	public Integer getZt() {
+		return zt;
+	}
+
+	public void setZt(Integer zt) {
+		this.zt = zt;
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+}

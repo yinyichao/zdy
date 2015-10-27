@@ -1,0 +1,18 @@
+package com.zdy.service;
+
+import java.util.List;
+import java.util.Map;
+
+import com.zdy.entity.Car;
+import com.zdy.utils.Page;
+
+public interface Car1Manager {
+	
+	public Car getCar(Car car);
+	public List<Car> getCarAll();
+	public Page<Car> findPageCarByIntegrateds(int start, int limit, Map<String, Object> conditions);
+	public void modifyCar(Car car);
+	public void saveCar(Car car);
+	public void modifyCarState(Car car);//Âß¼­É¾
+
+}

@@ -1,0 +1,11 @@
+package com.zdy.service;
+
+import java.util.List;
+
+import com.zdy.entity.Menu;
+
+public interface MenuManager {
+
+	public List<Menu> getMenuAll(Long userId);
+
+}

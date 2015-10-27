@@ -1,0 +1,52 @@
+package com.zdy.dao.impl;
+
+import java.math.BigDecimal;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.persistence.Query;
+
+import org.springframework.stereotype.Service;
+
+import com.zdy.dao.UserDao;
+import com.zdy.dao.base.BaseJPADao;
+import com.zdy.entity.User;
+import com.zdy.utils.Page;
+@Service("userDao")
+public class UserDaoImpl  extends BaseJPADao<User, Long> implements UserDao{
+	/**
+	 * 
+	 */
+	public User getUser(User user) {
+		Map<String, Object> userMap = new HashMap<String, Object>();
+		userMap.put("username", user.getUsername());
+		userMap.put("mm", user.getMm());
+		return findUniqueBy(userMap);
+	}
+
+	@Override
+	public List<User> getUserAll() {
+		return listAll();
+	}
+	public Page<User> findPageUserByIntegrateds(Page<User> page, Map<String, Object> conditions) {
+		String fromSql = "from z_user t ";
+
+				
+		fromSql += " order by t.id desc";
+		String countSql = "select count(1) " + fromSql;
+		String sql = "select t.* " + fromSql;
+		Query query = getEntityManager().createNativeQuery(countSql);
+		BigDecimal count = (BigDecimal) query.getSingleResult();
+		page.setTotal(count.longValue());
+		
+		query = getEntityManager().createNativeQuery(sql, this.getEntityClass());
+		query.setFirstResult(page.getStart());
+		query.setMaxResults(page.getLimit());
+		@SuppressWarnings("unchecked")
+		List<User> result = query.getResultList();
+		page.setRoot(result);
+		
+		return page;
+	}
+}
